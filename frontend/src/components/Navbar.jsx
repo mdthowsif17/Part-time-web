@@ -50,6 +50,11 @@ export default function Navbar() {
               </>
             )}
 
+            {/* Profile — both roles */}
+            <button className={`nav-btn ${isActive('/profile')}`} onClick={() => navigate('/profile')}>
+              ✏️ Profile
+            </button>
+
             <button className="nav-btn logout" onClick={handleLogout}>Logout</button>
           </>
         ) : (

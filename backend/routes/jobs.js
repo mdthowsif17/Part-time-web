@@ -3,13 +3,26 @@ const router = express.Router();
 const Job = require('../models/Job');
 const Application = require('../models/Application');
 const authMiddleware = require('../middleware/auth');
+const DISTRICTS = require('../constants/districts');
 
-// GET /api/jobs
+// GET /api/jobs/districts — return all TN districts
+router.get('/districts', (req, res) => {
+  res.json(DISTRICTS);
+});
+
+// GET /api/jobs — all jobs with optional filters
 router.get('/', async (req, res) => {
   try {
     const today = new Date().toISOString().split('T')[0];
     let query = { date: { $gte: today } };
+
+    // date filter
     if (req.query.filter === 'today') query.date = today;
+
+    // district filter
+    if (req.query.district && req.query.district !== 'all') {
+      query.district = req.query.district;
+    }
 
     const jobs = await Job.find(query).sort({ date: 1, createdAt: -1 });
 
@@ -31,12 +44,10 @@ router.get('/employer/myjobs', authMiddleware, async (req, res) => {
       return res.status(403).json({ message: 'Access denied' });
     }
     const jobs = await Job.find({ postedBy: req.user.id }).sort({ createdAt: -1 });
-
     const jobsWithCount = await Promise.all(jobs.map(async (job) => {
       const count = await Application.countDocuments({ jobId: job._id });
       return { ...job.toObject(), applicantCount: count };
     }));
-
     res.json(jobsWithCount);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -61,14 +72,14 @@ router.post('/', authMiddleware, async (req, res) => {
     if (req.user.role !== 'employer') {
       return res.status(403).json({ message: 'Only employers can post jobs' });
     }
-    const { title, date, time, hoursOfWork, location, salary, contactPhone, contactEmail } = req.body;
-    if (!title || !date || !time || !hoursOfWork || !location || !salary) {
+    const { title, date, time, hoursOfWork, location, district, salary, contactPhone, contactEmail } = req.body;
+    if (!title || !date || !time || !hoursOfWork || !location || !district || !salary) {
       return res.status(400).json({ message: 'All fields are required' });
     }
     const job = new Job({
       title, date, time,
       hoursOfWork: Number(hoursOfWork),
-      location, salary,
+      location, district, salary,
       contactPhone: contactPhone || '',
       contactEmail: contactEmail || '',
       postedBy: req.user.id,

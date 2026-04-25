@@ -8,6 +8,7 @@ import UserHome from './pages/UserHome';
 import EmployerHome from './pages/EmployerHome';
 import PostJobPage from './pages/PostJobPage';
 import MyApplicationsPage from './pages/MyApplicationsPage';
+import ProfilePage from './pages/ProfilePage';
 import './index.css';
 
 function ProtectedRoute({ children, role }) {
@@ -50,6 +51,9 @@ function AppRoutes() {
         } />
         <Route path="/my-applications" element={
           <ProtectedRoute role="user"><MyApplicationsPage /></ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute><ProfilePage /></ProtectedRoute>
         } />
         <Route path="*" element={<Navigate to={user ? "/home" : "/"} />} />
       </Routes>

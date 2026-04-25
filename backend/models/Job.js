@@ -24,6 +24,11 @@ const jobSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  district: {
+    type: String,
+    required: true,
+    trim: true
+  },
   salary: {
     type: Number,
     required: true

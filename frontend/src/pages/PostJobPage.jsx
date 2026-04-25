@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
+import TAMILNADU_DISTRICTS from '../constants/districts';
 
 export default function PostJobPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     title: '', date: '', time: '', hoursOfWork: '',
-    location: '', salary: '', contactPhone: '', contactEmail: ''
+    location: '', district: '', salary: '',
+    contactPhone: '', contactEmail: ''
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -35,7 +37,7 @@ export default function PostJobPage() {
         hoursOfWork: Number(form.hoursOfWork)
       });
       setSuccess('Job posted successfully! ✅');
-      setForm({ title: '', date: '', time: '', hoursOfWork: '', location: '', salary: '', contactPhone: '', contactEmail: '' });
+      setForm({ title: '', date: '', time: '', hoursOfWork: '', location: '', district: '', salary: '', contactPhone: '', contactEmail: '' });
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to post job');
     } finally {
@@ -47,7 +49,7 @@ export default function PostJobPage() {
     <div className="page">
       <div className="page-title">Post a <span>Job</span></div>
 
-      <div style={{ maxWidth: '560px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '580px', margin: '0 auto' }}>
         <div className="card" style={{ padding: '1.75rem' }}>
           <h3 style={{ fontFamily: 'var(--font-head)', marginBottom: '1.25rem', fontSize: '1rem' }}>
             New Job Posting
@@ -75,7 +77,7 @@ export default function PostJobPage() {
               </div>
             </div>
 
-            {/* Hours of Work + Salary */}
+            {/* Hours + Salary */}
             <div className="form-row">
               <div className="form-group">
                 <label>⏱ Hours of Work</label>
@@ -92,10 +94,21 @@ export default function PostJobPage() {
               </div>
             </div>
 
-            {/* Location */}
+            {/* District dropdown */}
             <div className="form-group">
-              <label>📍 Location</label>
-              <input name="location" placeholder="e.g. Anna Nagar, Chennai" value={form.location} onChange={handleChange} required />
+              <label>🗺️ District (Tamil Nadu)</label>
+              <select name="district" value={form.district} onChange={handleChange} required>
+                <option value="">Select district</option>
+                {TAMILNADU_DISTRICTS.map(d => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Location (area/street) */}
+            <div className="form-group">
+              <label>📍 Area / Street</label>
+              <input name="location" placeholder="e.g. Anna Nagar, Pettai" value={form.location} onChange={handleChange} required />
             </div>
 
             {/* Contact */}
@@ -119,12 +132,7 @@ export default function PostJobPage() {
               {loading ? 'Posting...' : '+ Post Job'}
             </button>
 
-            <button
-              type="button"
-              className="btn btn-outline btn-full"
-              style={{ marginTop: '0.5rem' }}
-              onClick={() => navigate('/home')}
-            >
+            <button type="button" className="btn btn-outline btn-full" style={{ marginTop: '0.5rem' }} onClick={() => navigate('/home')}>
               ← Back to Dashboard
             </button>
           </form>

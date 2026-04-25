@@ -49,48 +49,31 @@ export default function JobModal({ job, onClose, onApplied }) {
       <div className="modal" onClick={e => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>✕</button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
           {isToday && <span className="today-tag">Today</span>}
-          <span style={{ fontSize: '0.8rem', color: 'var(--text2)' }}>by {job.employerName}</span>
-          <span style={{
-            fontSize: '0.75rem',
-            marginLeft: 'auto',
-            background: 'var(--surface2)',
-            padding: '0.1rem 0.55rem',
-            borderRadius: '20px',
-            color: job.applicantCount > 0 ? 'var(--accent2)' : 'var(--text2)'
-          }}>
-            👥 {job.applicantCount || 0} applied
-          </span>
+          {job.district && (
+            <span style={{
+              background: 'rgba(245,197,24,0.1)', color: 'var(--accent)',
+              border: '1px solid rgba(245,197,24,0.25)', borderRadius: '5px',
+              padding: '0.1rem 0.5rem', fontSize: '0.75rem', fontWeight: 600
+            }}>
+              🗺️ {job.district}
+            </span>
+          )}
+          <span style={{ fontSize: '0.8rem', color: 'var(--text2)', marginLeft: 'auto' }}>by {job.employerName}</span>
         </div>
 
         <div className="modal-title">{job.title}</div>
 
-        {/* Detail Grid - now 3 columns to fit hours */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gap: '0.75rem',
-          margin: '1rem 0'
-        }}>
+        {/* Detail Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', margin: '1rem 0' }}>
+          <div className="detail-item"><label>📅 Date</label><span>{job.date}</span></div>
+          <div className="detail-item"><label>🕐 Start Time</label><span>{job.time}</span></div>
           <div className="detail-item">
-            <label>📅 Date</label>
-            <span>{job.date}</span>
+            <label>⏱ Hours</label>
+            <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{job.hoursOfWork} {job.hoursOfWork === 1 ? 'hr' : 'hrs'}</span>
           </div>
-          <div className="detail-item">
-            <label>🕐 Start Time</label>
-            <span>{job.time}</span>
-          </div>
-          <div className="detail-item">
-            <label>⏱ Hours of Work</label>
-            <span style={{ color: 'var(--accent)', fontWeight: 600 }}>
-              {job.hoursOfWork} {job.hoursOfWork === 1 ? 'hour' : 'hours'}
-            </span>
-          </div>
-          <div className="detail-item">
-            <label>📍 Location</label>
-            <span>{job.location}</span>
-          </div>
+          <div className="detail-item"><label>📍 Location</label><span>{job.location}</span></div>
           <div className="detail-item">
             <label>💰 Salary</label>
             <span style={{ color: 'var(--accent)', fontWeight: 700 }}>₹{job.salary}</span>
@@ -106,11 +89,8 @@ export default function JobModal({ job, onClose, onApplied }) {
         {/* Employer Contact */}
         {(job.contactPhone || job.contactEmail) && (
           <div style={{
-            background: 'var(--surface2)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius)',
-            padding: '0.75rem 1rem',
-            marginBottom: '0.5rem'
+            background: 'var(--surface2)', border: '1px solid var(--border)',
+            borderRadius: 'var(--radius)', padding: '0.75rem 1rem', marginBottom: '0.5rem'
           }}>
             <div style={{ fontSize: '0.78rem', color: 'var(--text2)', marginBottom: '0.4rem', fontWeight: 600 }}>
               📞 Employer Contact
@@ -129,24 +109,15 @@ export default function JobModal({ job, onClose, onApplied }) {
         )}
 
         {msg && (
-          <div className={msgType === 'success' ? 'form-success' : 'form-error'} style={{ marginTop: '0.5rem' }}>
-            {msg}
-          </div>
+          <div className={msgType === 'success' ? 'form-success' : 'form-error'} style={{ marginTop: '0.5rem' }}>{msg}</div>
         )}
 
-        {/* User details after apply */}
         {applied && user?.role === 'user' && (
           <div style={{
-            background: 'rgba(34,197,94,0.07)',
-            border: '1px solid rgba(34,197,94,0.2)',
-            borderRadius: 'var(--radius)',
-            padding: '0.75rem 1rem',
-            marginTop: '0.5rem',
-            fontSize: '0.85rem'
+            background: 'rgba(34,197,94,0.07)', border: '1px solid rgba(34,197,94,0.2)',
+            borderRadius: 'var(--radius)', padding: '0.75rem 1rem', marginTop: '0.5rem', fontSize: '0.85rem'
           }}>
-            <div style={{ fontWeight: 600, color: 'var(--green)', marginBottom: '0.3rem' }}>
-              Your details sent to employer:
-            </div>
+            <div style={{ fontWeight: 600, color: 'var(--green)', marginBottom: '0.3rem' }}>Your details sent to employer:</div>
             <div>👤 {user.name}</div>
             {user.phone && <div>📱 {user.phone}</div>}
             <div>✉️ {user.email}</div>
@@ -167,9 +138,7 @@ export default function JobModal({ job, onClose, onApplied }) {
 
         {!user && (
           <div style={{ marginTop: '1rem' }}>
-            <button className="btn btn-primary btn-full" onClick={() => navigate('/login')}>
-              Login to Apply
-            </button>
+            <button className="btn btn-primary btn-full" onClick={() => navigate('/login')}>Login to Apply</button>
           </div>
         )}
       </div>
